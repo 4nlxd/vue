@@ -34,7 +34,7 @@ router.beforeEach(async(to, from, next) => {
 			    // if(window.sessionStorage.getItem('userCofig')){
 			    // 	 roles.push(JSON.parse(window.sessionStorage.getItem('userCofig')).roleId);
 			    // }
-				let roles='admins';
+				 let roles='admins';
 			   store.dispatch('GenerateRoutes', { roles }).then(() => { // 生成可访问的路由表
 			        // 动态添加可访问路由表
 					router.options.routes=router.options.routes.concat(store.getters.addRouters);

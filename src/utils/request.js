@@ -7,10 +7,10 @@ import { getToken } from '@/utils/auth'
 // 环境的切换
 let baseWebURL='';
 let prefix = 'https:' == document.location.protocol ? 'https' : 'http';
-if (window.location.origin.indexOf('local') >= 0  || window.location.origin.indexOf('192.168.0.128') >= 0 ) {
-    baseWebURL= prefix + '://192.168.0.128:1488/';
+if (window.location.origin.indexOf('local') >= 0) {
+    baseWebURL= prefix + '://47.116.141.193:8080/api/';
 }else{
-	baseWebURL= prefix + '://api.mooligo.com';
+	baseWebURL= prefix + '://api.yzfyzf.com';
 }
 const service = axios.create({
   baseURL: baseWebURL, // url = base url + request url

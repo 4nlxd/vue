@@ -2,9 +2,9 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: 'backend/admin/login',
-    method: 'get',
-    params:data
+    url: 'admin/login',
+    method: 'post',
+    data:data
   })
 }
 
