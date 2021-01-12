@@ -48,7 +48,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-
+import { getUser} from '@/utils/auth'
 export default {
   name: 'Login',
   data() {
@@ -77,7 +77,8 @@ export default {
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+	  arrData:['/stock','/shopowner']
     }
   },
   watch: {
@@ -104,7 +105,9 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then((data) => {
-            this.$router.push({ path: this.redirect || 'stock' })
+			let num=getUser().roles[0].id-1;
+			let route=this.arrData[num];
+            this.$router.push({ path: this.redirect || route })
             this.loading = false
           }).catch(() => {
             this.loading = false

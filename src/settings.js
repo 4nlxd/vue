@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Vue Admin Template',
+  title: '库存管理台',
   fixedHeader: false,
   sidebarLogo: false
 }

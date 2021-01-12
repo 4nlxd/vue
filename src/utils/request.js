@@ -7,17 +7,18 @@ import { getToken } from '@/utils/auth'
 // 环境的切换
 let baseWebURL='';
 let prefix = 'https:' == document.location.protocol ? 'https' : 'http';
-if (window.location.origin.indexOf('local') >= 0) {
-    baseWebURL= prefix + '://47.116.141.193:8080/api/';
+if (window.location.origin.indexOf('local') >= 0 || window.location.origin.indexOf('192.168.0.190') >= 0) {
+    // baseWebURL= prefix + '://192.168.0.134:8080/api/';
+	baseWebURL='https://api.yzfyzf.com/api/';
 }else{
-	baseWebURL= prefix + '://api.yzfyzf.com';
+	baseWebURL= prefix + '://api.yzfyzf.com/api/';
 }
 const service = axios.create({
   baseURL: baseWebURL, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
-
+let that=this;
 // request interceptor
 service.interceptors.request.use(
   config => {
@@ -56,12 +57,13 @@ service.interceptors.response.use(
     // if the custom code is not 20000, it is judged as an error.
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+      if (res.code ===10007 || res.code === 50012 || res.code === 50014) {
         // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
+        MessageBox.confirm('token已经失效请重新登录', '重新登录', {
+          confirmButtonText: '重新等录',
+          type: 'warning',
+		  showCancelButton:false,
+		  showClose:false
         }).then(() => {
           store.dispatch('user/resetToken').then(() => {
             location.reload()
@@ -79,7 +81,7 @@ service.interceptors.response.use(
       message: error.message,
       type: 'error',
       duration: 5 * 1000
-    })
+    });
     return Promise.reject(error)
   }
 )

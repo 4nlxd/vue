@@ -3,41 +3,55 @@
 		<div class='title'>
 			<div class='titleLeft'>
 				<el-row>
-					<el-col :span="10" :offset='12'>
+					<el-col :span="10">
+						<div class='titlecontent'>
+							<span>仓库</span>
+							<el-select class='titleInput' v-model="value" placeholder="请选择" @change="handleChange()">
+								<el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id">
+								</el-option>
+							</el-select>
+						</div>
+					</el-col>
+					<el-col :span="10">
 						<div class='titlecontent'>
 							<span>货品名称</span>
-							<el-input v-model="userId" placeholder="请输入内容" class='titleInput'></el-input>
+							<el-input v-model="goodsName" placeholder="请输入内容" class='titleInput'></el-input>
 						</div>
 					</el-col>
 				</el-row>
 			</div>
 			<el-button type="primary" class='search' @click='handleSerch'>查询</el-button>
-			<el-button type="danger" class='clear' @click='handleClear'>清空</el-button>
+			<!-- <el-button type="danger" class='clear' @click='handleClear'>清空</el-button> -->
 		</div>
 		<div class='contentMain'>
-			<el-table :data="tableData" border style="width:75%;float:left;">
-				<el-table-column prop="printDate" label="出票时间">
+			<el-table :data="tableData" border style="width: 75%;float:left;">
+				<el-table-column prop="id" label="货品ID">
 				</el-table-column>
-				<el-table-column prop="ticketId" label="票号" width='300'>
+				<el-table-column prop="name" label="货品">
 				</el-table-column>
-				<el-table-column prop="payPrice" label="票面价格">
-				</el-table-column>
-				<el-table-column prop="successCnt" label="彩站名称" width='300'>
-				</el-table-column>
-				<el-table-column prop="payOrderName" label="出票状态">
-
-				</el-table-column>
-				<el-table-column label="中奖金额">
+				<el-table-column label="出货价格">
 					<template slot-scope="scope">
-						<span class='stateColor1' v-if="(scope.row.winAmount==0 && scope.row.state==2)">未中奖</span>
-						<span class='stateColor2' v-if="(scope.row.winAmount>0)">￥{{scope.row.winAmount}}</span>
-						<span v-if="( scope.row.state==1)">未开奖</span>
-						<span v-if="( scope.row.state==0)">出票失败</span>
+						<span>￥{{scope.row.price}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="uid" label="用户ID">
+				<el-table-column label="库存量">
+					<template slot-scope="scope">
+						<span class='color' v-if='scope.row.stock==0'>{{scope.row.stock}}沽清</span>
+						<span v-if='scope.row.stock>0'>{{scope.row.stock}}</span>
+					</template>
 				</el-table-column>
-				<el-table-column prop="lpsOrderNo" label="订单号" width='300'>
+				<el-table-column prop="unit" label="单位">
+				</el-table-column>
+				<el-table-column label="状态">
+					<template slot-scope="scope">
+						<span class='color' v-if='scope.row.stockStatus==0'>暂停</span>
+						<span v-if='scope.row.stockStatus==1'>正常</span>
+					</template>
+				</el-table-column>
+				<el-table-column label="修改货品">
+					<template slot-scope="scope">
+						<el-button @click='handleMask(1,scope.row)' type="text" size="small">订货</el-button>
+					</template>
 				</el-table-column>
 			</el-table>
 			<div class='mainprice'>
@@ -45,46 +59,46 @@
 					订货清单
 				</div>
 				<ul class='mainList'>
-					<li>
-						<span class='mainBt'>1.</span>
+					<li v-for='(item,key) in totalDate'>
+						<span class='mainBt'>{{key+1}}.</span>
 						<span>
-							<strong>猪肉</strong><br>
-							<i>500斤&nbsp;￥1000.00</i>
+							<strong>{{item.name}}</strong><br>
+							<i>{{item.storageQuantity}}{{item.unit}}&nbsp;￥{{item.singlePrice}}</i>
 						</span>
-						<i class="el-icon-close"></i>
+						<i class="el-icon-close" @click='handleCelear(key)'></i>
 					</li>
 				</ul>
 				<div class='mianBottom'>
-					<p class='bottomprice'>合计金额:&nbsp;<strong>￥5000.00</strong></p>
-					<el-button type="primary" class='btn'>下单</el-button>
-					<el-button type="danger">清空</el-button>
+					<p class='bottomprice'>合计金额:&nbsp;<strong>￥{{totalPrice}}</strong></p>
+					<el-button type="primary" class='btn' @click='handleAdd(2)'>下单</el-button>
+					<el-button type="danger" @click='handleAdd(0)'>清空</el-button>
 				</div>
 			</div>
 
 		</div>
 		<div class='mask' v-if='isMask'>
 			<div class="maskContent">
-				<i class="el-icon-close"></i>
+				<i class="el-icon-close" @click='handleMask(0)'></i>
 				<div class='maskMain'>
 					<h2 class='maskTitle'>订购货品</h2>
 					<div class='mainContent'>
 						<span class='mainTtile'>货品:</span>
-						<span class='mainName'>猪肉</span>
+						<span class='mainName'>{{showData.name}}</span>
 					</div>
 					<div class='mainContent'>
 						<span class='mainTtile'>库存:</span>
-						<span class='mainName'>300</span>
+						<span class='mainName'>{{showData.stock}}</span>
 					</div>
 					<div class='mainContent'>
 						<span class='mainTtile'>单位:</span>
-						<span class='mainName'>公斤</span>
+						<span class='mainName'>{{showData.unit}}</span>
 					</div>
 					<div class='mainContent'>
 						<span class='mainTtile'>订购数量:</span>
 						<el-input class='input' v-model="storageQuantity" placeholder="请输入内容"></el-input>
 					</div>
 					<div class='bottombtn'>
-						<el-button type="primary" class='btn'>添加</el-button>
+						<el-button type="primary" class='btn' @click='handleAdd(1)'>添加</el-button>
 						<el-button type="primary" class='btn' @click='handleMask(0)'>取消</el-button>
 					</div>
 				</div>
@@ -92,40 +106,28 @@
 		</div>
 		<div class='mask' v-if='isMask1'>
 			<div class="maskContent">
-				<i class="el-icon-close"></i>
+				<i class="el-icon-close" @click='handleMask(0)'></i>
 				<div class='maskMain'>
 					<h2 class='maskTitle'>确认下单</h2>
 					<div class='orderdetaile'>
 						<div class='mainContent1'>
 							<span class='mainTtile'>货品:</span>
 							<ul class='orderMain'>
-								<li>
-									<span class='orderTitle'>1.</span>
-									<span>猪肉(001)</span>
-									<span>500</span>
-									<span style='color:red;'>500$</span>
-								</li>
-								<li>
-									<span class='orderTitle'>1.</span>
-									<span>猪肉(001)</span>
-									<span>500</span>
-									<span>500$</span>
-								</li>
-								<li>
-									<span class='orderTitle'>1.</span>
-									<span>猪肉(001)</span>
-									<span>500</span>
-									<span>500$</span>
+								<li v-for='(item,key) in totalDate'>
+									<span class='orderTitle'>{{key+1}}.</span>
+									<span>{{item.name}}(00{{key+1}})</span>
+									<span>{{item.storageQuantity}}{{item.unit}}</span>
+									<span style='color:red;'>￥{{item.singlePrice}}</span>
 								</li>
 							</ul>
 						</div>
-					 <div class='totalPrice'>
-						<span>合计:</span>
-						<span style='color:red'>￥50000</span>
-					 </div>
+						<div class='totalPrice'>
+							<span>合计:</span>
+							<span style='color:red'>￥{{totalPrice}}</span>
+						</div>
 					</div>
 					<div class='bottombtn1'>
-						<el-button type="primary" class='btn'>确认下单</el-button>
+						<el-button type="primary" class='btn' @click='handleOrder()'>确认下单</el-button>
 					</div>
 				</div>
 			</div>
@@ -138,9 +140,13 @@
 </template>
 
 <script>
-	// import {
-	// 	ticketsOrderDetail
-	// } from '@/api/documentary'
+	import {
+		storeroomAll,
+		getList,
+	} from '@/api/stock'
+	import {
+		orderAdd,
+	} from '@/api/shop'
 	import {
 		parseTime
 	} from '@/utils/index'
@@ -161,69 +167,46 @@
 		},
 		data() {
 			return {
-				tableData: null,
+				tableData: [],
 				listLoading: true,
 				dataTime: '',
 				datatime: [],
-				isMask:0,
-				isMask1:0,
+				isMask: 0,
+				isMask1: 0,
 				page: 1,
 				total: 0,
-				userId: '',
+				goodsName: '',
 				ticketId: '',
 				orderId: '',
 				awardState: -1,
 				printState: -1,
-				storageQuantity:'',
-				options1: [{
-					value: -1,
-					label: '全部'
-				}, {
-					value: 0,
-					label: '朝阳店'
-				}],
-				options2: [{
-					value: -1,
-					label: '全部'
-				}, {
-					value: 1,
-					label: '待发货'
-				}, {
-					value: 2,
-					label: '已发货'
-				}, {
-					value: 3,
-					label: '已取消'
-				}, {
-					value: 4,
-					label: '已完成'
-				}],
+				storageQuantity: '',
+				value: 1,
+				options: [],
+				showData: {},
+				totalDate: [],
+				totalPrice: 0,
 			}
 		},
 		created() {
-
 			const end = new Date()
 			this.dataTime = end;
+			this.storeroomAllData();
 			this.fetchData();
 		},
 		methods: {
 			fetchData() {
 				this.listLoading = true;
-				let startDate = parseTime(this.dataTime, '{y}-{m}-{d}');
-				let uid = this.userId == '' ? 0 : this.userId
-				let objList = {
-					date: startDate,
-					uid: uid,
-					ticketId: this.ticketId,
-					orderNo: this.orderId,
-					awartState: this.awardState,
-					printState: this.printState,
-					pn: this.page
-				};
-				ticketsOrderDetail(objList).then(response => {
+				let data = {
+					pageNo: this.page,
+					pageSize: 10,
+					roomId: this.value,
+					name:this.goodsName,
+				}
+				getList(data).then(response => {
 					this.listLoading = false;
 					if (response.code == 0) {
-						this.tableData = this.dataList(response.data.list);
+						this.tableData = response.data.list || [];
 						this.total = response.data.total;
 					} else {
 						Message({
@@ -234,34 +217,172 @@
 					}
 				})
 			},
-			dataList(list) {
-				list.map(function(item) {
-					item.payPrice = '￥' + item.multi * 2;
-					if (item.printState == 0) {
-						item.payOrderName = '未出票'
-					} else if (item.printState == 1) {
-						item.payOrderName = '已出票'
+			storeroomAllData() {
+				this.listLoading = true;
+				let data = {}
+				storeroomAll(data).then(response => {
+					this.listLoading = false;
+					if (response.code == 0) {
+						this.options = response.data || [];
 					} else {
-						item.payOrderName = '';
+						Message({
+							message: response.message || 'Error',
+							type: 'error',
+							duration: 5 * 1000
+						})
 					}
-				});
-				return list;
+				})
+			},
+			orderAddData(data) {
+				this.listLoading = true;
+				orderAdd(data).then(response => {
+					this.listLoading = false;
+					if (response.code == 0) {
+						Message({
+							message: '下单成功' || 'Error',
+							type: 'success',
+							duration: 5 * 1000
+						});
+						this.isMask1=0;
+						this.totalDate=[];
+						this.fetchData();
+					} else {
+						Message({
+							message: response.message || 'Error',
+							type: 'error',
+							duration: 5 * 1000
+						})
+					}
+				})
+			},
+			handleChange() {
+				this.fetchData();
+			},
+			handleMask(index, data) {
+				if (index == 0) {
+					this.isMask = 0;
+					this.isMask1=0;
+				} else if (index == 1) {
+					this.isMask = 1;
+					this.storageQuantity = '';
+					this.showData = data;
+				}
 			},
 			handleSerch() {
 				this.fetchData();
 			},
 			handleClear() {
-				this.userId = '';
-				this.ticketId = '';
-				this.orderId = '';
-				this.awardState = -1;
-				this.printState = -1;
-				const end = new Date();
-				this.dataTime = end;
+				this.goodsName = '';
+				this.value=1;
 			},
 			handleCurrentChange(val) {
 				this.page = val;
 				this.fetchData();
+			},
+			handleAdd(index) {
+				if(index==0){
+					this.totalDate=[];
+				}else if (index == 1 && this.SubmitTips()) {
+					let num = 0;
+					let ishas=0;
+					if (this.totalDate.length == 0) {
+						if(parseInt(this.storageQuantity)>parseInt(this.showData.stock)){
+							Message({
+								message: '订货数量超过了库存',
+								type: 'error',
+								duration: 2 * 1000
+							});
+							return;
+						}
+						this.showData.value = this.value;
+						this.showData.storageQuantity = this.storageQuantity;
+						this.showData.singlePrice=this.storageQuantity*this.showData.price;
+						this.totalPrice=this.showData.singlePrice;
+						this.totalDate.push(this.showData);
+					} else {
+						this.totalPrice=0;
+						for (let i = 0; i < this.totalDate.length; i++) {
+							if (this.totalDate[i].value != this.value) {
+								num++
+							}
+							if (this.totalDate[i].id == this.showData.id) {
+								if((parseInt(this.totalDate[i].storageQuantity)+parseInt(this.storageQuantity))>parseInt(this.showData.stock)){
+									Message({
+										message: '订货数量超过了库存',
+										type: 'error',
+										duration: 2 * 1000
+									});
+									return;
+								}else{
+									this.totalDate[i].storageQuantity=parseInt(this.totalDate[i].storageQuantity)+parseInt(this.storageQuantity);
+								    this.totalDate[i].singlePrice=this.totalDate[i].storageQuantity*this.totalDate[i].price;
+								    ishas++;
+								}
+							}
+							
+							this.totalPrice=parseInt(this.totalPrice)+parseInt(this.totalDate[i].singlePrice);
+						}
+						if (num > 0) {
+							Message({
+								message: '订货清单必须为同一仓库',
+								type: 'error',
+								duration: 2 * 1000
+							});
+							return;
+						} else if(ishas==0){
+							this.showData.value = this.value;
+							this.showData.storageQuantity = this.storageQuantity;
+							this.showData.singlePrice=this.storageQuantity*this.showData.price;
+							this.totalPrice=parseInt(this.totalPrice)+parseInt(this.showData.singlePrice);
+							this.totalDate.push(this.showData);
+						}
+					}
+					this.isMask = 0;
+				}else if(index==2){
+					if(this.totalDate.length>0){
+						this.isMask1=1;
+					}
+				}
+			},
+			handleCelear(index) {
+				this.totalDate.splice(index, 1);
+			},
+			handleOrder() {
+				let dataArr = [];
+				let data={};
+				if (this.totalDate.length > 0) {
+					for (let i = 0; i < this.totalDate.length; i++) {
+						let dataObj = {
+							"id": this.totalDate[i].id,
+							"orderId": 0,
+							"remark": "",
+							"stock":this.totalDate[i].storageQuantity,
+							"type": 0
+						}
+						dataArr.push(dataObj)
+					}
+				   data.goodsList=dataArr;
+				   data.organId=1;
+				   data.storeroomId=this.totalDate[0].value;
+				  this.orderAddData(data);
+				} else {
+					Message({
+						message: '请订货',
+						type: 'error',
+						duration: 2 * 1000
+					});
+				}
+			},
+			SubmitTips() {
+				if (!this.storageQuantity) {
+					Message({
+						message: '请填写订购数量',
+						type: 'error',
+						duration: 2 * 1000
+					});
+					return
+				};
+				return true;
 			},
 		}
 
@@ -292,7 +413,7 @@
 			margin: 20px 0;
 
 			.titleLeft {
-				width: 85%;
+				width: 75%;
 				height: 100px;
 				margin-top: 30px;
 				float: left;
@@ -326,6 +447,10 @@
 		.contentMain {
 			width: 97%;
 			height: 550px;
+
+			.color {
+				color: red;
+			}
 
 			.mainprice {
 				float: left;
@@ -386,11 +511,12 @@
 				}
 
 				.mianBottom {
-					.bottomprice{
+					.bottomprice {
 						line-height: 50px;
-						padding-left:10px;
+						padding-left: 10px;
 					}
-					padding-left: 65px;
+
+					padding-left: 22%;
 
 					.btn {
 						margin-right: 30px;
@@ -427,7 +553,7 @@
 					font-size: 30px;
 					cursor: pointer;
 				}
-           
+
 				.maskMain {
 					border: 1px solid #cecece;
 					position: relative;
@@ -451,57 +577,68 @@
 						font-size: 16px;
 						background-color: #FFFFFF;
 					}
-                    .orderdetaile{
-                    	.mainContent1{
-                    		width: 100%;
-                    		height:200px;
-							margin:20px auto;
+
+					.orderdetaile {
+						.mainContent1 {
+							width: 100%;
+							height: 200px;
+							margin: 20px auto;
+
 							.mainTtile {
-								float:left;
+								float: left;
 								width: 100px;
 								text-align: right;
 								margin-right: 20px;
 							}
-							.orderMain{
-								float:left;
+
+							.orderMain {
+								float: left;
 								overflow-y: scroll;
 							}
+
 							span {
 								display: inline-block;
 								width: 80px;
 								text-align: center;
-								
+
 							}
-							.orderTitle{
-								width:30px;
+
+							.orderTitle {
+								width: 30px;
 								text-align: left;
 							}
-                    	}
-                    	.orderMain{
-                    		text-align: center;
-                    		width:350px;
-                    		height:200px;
-                    		li{
-                    			height:50px;
+						}
+
+						.orderMain {
+							text-align: center;
+							width: 350px;
+							height: 200px;
+
+							li {
+								height: 50px;
 								list-style: none;
-                    		}
-                    	}
-                    	.totalPrice{
-                    		 width:80%;
-                    		 text-align: right;
-                    		 margin-top:40px;
-                    		 span{
-                    			 display: inline-block;
-                    			 padding: 0 10px;
-                    		 }
-                    	}
-                    	
-                    }
-					.bottombtn1{
-                    		width:30%;
-							margin: 0 auto;
-							margin-top:30px;
-                    	}
+							}
+						}
+
+						.totalPrice {
+							width: 80%;
+							text-align: right;
+							margin-top: 40px;
+
+							span {
+								display: inline-block;
+								padding: 0 10px;
+							}
+						}
+
+					}
+
+					.bottombtn1 {
+						width: 30%;
+						margin: 0 auto;
+						margin-top: 30px;
+					}
+
 					.mainContent {
 						width: 70%;
 						height: 50px;
@@ -539,6 +676,7 @@
 				}
 			}
 		}
+
 		.bottom {
 			margin-top: 20px;
 			width: 100%;

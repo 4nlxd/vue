@@ -7,6 +7,13 @@ export function getList(params) {
     params
   })
 }
+export function storeroomAll(params) {
+  return request({
+    url: 'storeroom/all',
+    method: 'get',
+    params
+  })
+}
 export function goodsAdd(data) {
   return request({
     url: 'goods/add',
@@ -28,14 +35,34 @@ export function goodsStockUpdate(data) {
     data
   })
 }
-export function goodsStatusUpdate(params) {
+export function goodsStatusUpdate(data) {
   return request({
     url: 'goods/status/update',
+    method: 'post',
+    data
+  })
+}
+export function goodsDetail(params) {
+  return request({
+    url: 'goods/detail',
     method: 'get',
     params
   })
 }
-
+export function goodsStockhistoryList(params) {
+  return request({
+    url: 'goods/stockhistory/list',
+    method: 'get',
+    params
+  })
+}
+export function goodsAllList(params) {
+  return request({
+    url: 'goods/all',
+    method: 'get',
+    params
+  })
+}
 
 
 

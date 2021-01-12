@@ -54,7 +54,7 @@ export const asyncRouterMap = [
     meta: {
       title: '店长后台',
       icon: 'el-icon-s-help',
-  	  role: [1]
+  	  role: [2]
     },
     children: [
 		    {
