@@ -29,11 +29,6 @@
 			<el-table :data="tableData" border style="width:97%">
 				<el-table-column prop="orderNo" label="订单编号">
 				</el-table-column>
-				<el-table-column label="金额">
-					<template slot-scope="scope">
-						<span>￥{{scope.row.amount}}</span>
-					</template>
-				</el-table-column>
 				<el-table-column prop="payPrice" label="店面">
 					<template slot-scope="scope">
 
@@ -102,13 +97,9 @@
 									<span class='orderTitle'>{{key+1}}.</span>
 									<span>{{item.goodsName}}(00{{key+1}})</span>
 									<span>{{item.quantity}}{{item.unit}}</span>
-									<span style='color:red;'>￥{{item.goodsPrice}}</span>
+									
 								</li>
 							</ul>
-						</div>
-						<div class='totalPrice'>
-							<span>合计:</span>
-							<span style='color:red'>￥{{originInfoData.amount}}</span>
 						</div>
 					</div>
 					<div class='bottombtn'>
@@ -188,7 +179,8 @@
 			}
 		},
 		created() {
-			this.organId=getUser().organs[0].id || 1;
+			// this.organId=getUser().organs[0].id || 1;
+			this.organId=1;
 			this.orderOrganAllData();
 			this.storeroomAllData();
 			this.fetchData();

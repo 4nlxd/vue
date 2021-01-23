@@ -50,7 +50,7 @@
 				</el-table-column>
 				<el-table-column label="修改货品">
 					<template slot-scope="scope">
-						<el-button @click='handleMask(1,scope.row)' type="text" size="small">订货</el-button>
+						<el-button @click='handleMask(1,scope.row)' v-if='scope.row.stockStatus==1' type="text" size="small">订货</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -63,13 +63,12 @@
 						<span class='mainBt'>{{key+1}}.</span>
 						<span>
 							<strong>{{item.name}}</strong><br>
-							<i>{{item.storageQuantity}}{{item.unit}}&nbsp;￥{{item.singlePrice}}</i>
+							<i>{{item.storageQuantity}}{{item.unit}}&nbsp;</i>
 						</span>
 						<i class="el-icon-close" @click='handleCelear(key)'></i>
 					</li>
 				</ul>
 				<div class='mianBottom'>
-					<p class='bottomprice'>合计金额:&nbsp;<strong>￥{{totalPrice}}</strong></p>
 					<el-button type="primary" class='btn' @click='handleAdd(2)'>下单</el-button>
 					<el-button type="danger" @click='handleAdd(0)'>清空</el-button>
 				</div>
@@ -117,13 +116,8 @@
 									<span class='orderTitle'>{{key+1}}.</span>
 									<span>{{item.name}}(00{{key+1}})</span>
 									<span>{{item.storageQuantity}}{{item.unit}}</span>
-									<span style='color:red;'>￥{{item.singlePrice}}</span>
 								</li>
 							</ul>
-						</div>
-						<div class='totalPrice'>
-							<span>合计:</span>
-							<span style='color:red'>￥{{totalPrice}}</span>
 						</div>
 					</div>
 					<div class='bottombtn1'>
@@ -294,11 +288,13 @@
 							});
 							return;
 						}
+						console.log(this.showData);
 						this.showData.value = this.value;
 						this.showData.storageQuantity = this.storageQuantity;
 						this.showData.singlePrice=this.storageQuantity*this.showData.price;
 						this.totalPrice=this.showData.singlePrice;
 						this.totalDate.push(this.showData);
+						console.log(this.totalDate);
 					} else {
 						this.totalPrice=0;
 						for (let i = 0; i < this.totalDate.length; i++) {

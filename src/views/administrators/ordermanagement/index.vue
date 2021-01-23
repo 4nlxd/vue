@@ -67,7 +67,6 @@
 						<span v-if='scope.row.createdDate'>{{timeData(scope.row.createdDate)}}</span>
 						<span v-if='!scope.row.createdDate'>--</span>
 					</template>
-					
 				</el-table-column>
 				<el-table-column label="完成时间">
 					<template slot-scope="scope">
@@ -98,6 +97,10 @@
 						<span class='mainName'>{{detailData.orderNo}}</span>
 					</div>
 					<div class='mainContent'>
+						<span class='mainTtile'>金额:</span>
+						<span class='mainName'>￥{{detailData.amount}}</span>
+					</div>
+					<div class='mainContent'>
 						<span class='mainTtile'>店面:</span>
 						<span class='mainName'>{{orderOrganId(detailData.organId)}}</span>
 					</div>
@@ -108,6 +111,7 @@
 								<span class='orderTitle'>{{key+1}}.</span>
 								<span>{{item.goodsName}}(00{{key+1}})</span>
 								<span>{{item.quantity}}{{item.unit}}</span>
+								<span style='color:red;'>￥{{item.goodsPrice}}</span>
 							</li>
 						</ul>
 					</div>
@@ -175,8 +179,13 @@
 									<span class='orderTitle'>{{key+1}}.</span>
 									<span>{{item.goodsName}}(00{{key+1}})</span>
 									<span>{{item.quantity}}{{item.unit}}</span>
+									<span style='color:red;'>￥{{item.goodsPrice}}</span>
 								</li>
 							</ul>
+						</div>
+						<div class='totalPrice'>
+							<span>合计:</span>
+							<span style='color:red'>￥{{originInfoData.amount}}</span>
 						</div>
 					</div>
 					<div class='bottombtn1'>

@@ -16,6 +16,11 @@
 				</el-table-column>
 				<el-table-column prop="name" label="货品">
 				</el-table-column>
+				<el-table-column  label="出货价格">
+					<template slot-scope="scope">
+						<span>￥{{scope.row.price}}</span>
+					</template>
+				</el-table-column>
 				<el-table-column  label="库存量">
 					<template slot-scope="scope">
 						<span class='color' v-if='scope.row.stock==0'>{{scope.row.stock}}沽清</span>
@@ -74,10 +79,10 @@
 						<span class='mainTtile'>货品名:</span>
 						<el-input class='input' v-model="productName" placeholder="请输入货品名"></el-input>
 					</div>
-					<!-- <div class='mainContent' v-if="isShow==2 || isShow==4">
+					<div class='mainContent' v-if="isShow==2 || isShow==4">
 						<span class='mainTtile'>货品价格:</span>
 						<el-input class='input' v-model="productPrice" placeholder="请输入货品价格"></el-input>
-					</div> -->
+					</div>
 					<div class='mainContent' v-if="isShow==2 || isShow==4">
 						<span class='mainTtile'>单位:</span>
 						<el-input class='input' v-model="company" placeholder="请输入单位"></el-input>
@@ -408,14 +413,14 @@
 					})
 					return
 				};
-				// if (!this.productPrice) {
-				// 	Message({
-				// 		message: '请填写商品价格',
-				// 		type: 'error',
-				// 		duration: 2 * 1000
-				// 	})
-				// 	return
-				// };
+				if (!this.productPrice) {
+					Message({
+						message: '请填写商品价格',
+						type: 'error',
+						duration: 2 * 1000
+					})
+					return
+				};
 				return true;
 			},
 			SubmitTips1() {

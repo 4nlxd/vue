@@ -32,7 +32,7 @@ router.beforeEach(async(to, from, next) => {
         try {
 			   let  roles=[];
 			   for(let i=0;i<getUser().roles.length;i++){
-				   roles.push(getUser().roles[i].id);
+				   roles.push(getUser().roles[i].name);
 			   }
 			   store.dispatch('GenerateRoutes', { roles }).then(() => { // 生成可访问的路由表
 			        // 动态添加可访问路由表

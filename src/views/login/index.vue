@@ -78,7 +78,7 @@ export default {
       loading: false,
       passwordType: 'password',
       redirect: undefined,
-	  arrData:['/stock','/shopowner']
+	  arrData:['/stock','/shopowner','/administrators']
     }
   },
   watch: {

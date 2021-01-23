@@ -19,11 +19,11 @@ export const asyncRouterMap = [
     path: '/stock',
     component: Layout,
     redirect: '/stock/goodsstock',
-    name: '库存后台',
+    name: '库管后台',
     meta: {
-      title: '库存后台',
+      title: '库管后台',
       icon: 'el-icon-s-help',
-	  role: [1]
+	  role: ['store_keeper']
     },
     children: [
       {
@@ -47,6 +47,37 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/administrators',
+    component: Layout,
+    redirect: '/administrators/goodsstock',
+    name: '管理员后台',
+    meta: {
+      title: '管理员后台',
+      icon: 'el-icon-s-help',
+  	  role: ['admin']
+    },
+    children: [
+      {
+        path: 'goodsstock',
+        component: () => import('@/views/administrators/goodsstock/index'), // Parent router-view
+        name: '货品库存',
+        meta: { title: '货品库存' },
+      },
+      {
+        path: 'flowofgoods',
+        component: () => import('@/views/administrators/flowofgoods/index'),
+        name: '货品流水',
+        meta: { title: '货品流水' }
+      },
+  	  {
+  	    path: 'ordermanagement',
+  	    component: () => import('@/views/administrators/ordermanagement/index'), // Parent router-view
+  	    name: '订单管理',
+  	    meta: { title: '订单管理' },
+  	  },
+    ]
+  },
+  {
     path: '/shopowner',
     component: Layout,
     redirect: '/shopowner/ordermanagement',
@@ -54,7 +85,7 @@ export const asyncRouterMap = [
     meta: {
       title: '店长后台',
       icon: 'el-icon-s-help',
-  	  role: [2]
+  	  role: ['organ_keeper']
     },
     children: [
 		    {
