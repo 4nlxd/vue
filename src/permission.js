@@ -30,10 +30,10 @@ router.beforeEach(async(to, from, next) => {
           next()
       } else {
         try {
-			   let  roles=[];
-			   for(let i=0;i<getUser().roles.length;i++){
-				   roles.push(getUser().roles[i].name);
-			   }
+			   let  roles=[0];
+			   // for(let i=0;i<getUser().roles.length;i++){
+				  //  roles.push(getUser().roles[i].name);
+			   // }
 			   store.dispatch('GenerateRoutes', { roles }).then(() => { // 生成可访问的路由表
 			        // 动态添加可访问路由表
 					router.options.routes=store.getters.addRouters;

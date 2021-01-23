@@ -29,11 +29,6 @@
 				</el-table-column>
 				<el-table-column prop="name" label="货品">
 				</el-table-column>
-				<el-table-column label="出货价格">
-					<template slot-scope="scope">
-						<span>￥{{scope.row.price}}</span>
-					</template>
-				</el-table-column>
 				<el-table-column label="库存量">
 					<template slot-scope="scope">
 						<span class='color' v-if='scope.row.stock==0'>{{scope.row.stock}}沽清</span>

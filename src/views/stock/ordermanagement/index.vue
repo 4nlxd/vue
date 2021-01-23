@@ -36,11 +36,6 @@
 			<el-table :data="tableData" border style="width:97%">
 				<el-table-column prop="orderNo" label="订单编号">
 				</el-table-column>
-				<el-table-column label="金额">
-					<template slot-scope="scope">
-						<span>￥{{scope.row.amount}}</span>
-					</template>
-				</el-table-column>
 				<el-table-column prop="payPrice" label="店面">
 					<template slot-scope="scope">
 
